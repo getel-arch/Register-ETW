@@ -1,6 +1,6 @@
 # Register-ETW
 
-[![Build & Release](https://github.com/getel-arch/C-Template/actions/workflows/build_and_release.yaml/badge.svg)](https://github.com/getel-arch/C-Template/actions/workflows/build_and_release.yaml)
+[![Build & Release](https://github.com/getel-arch/Register-ETW/actions/workflows/build_and_release.yaml/badge.svg)](https://github.com/getel-arch/Register-ETW/actions/workflows/build_and_release.yaml)
 
 A Windows ETW (Event Tracing for Windows) monitor that detects when the Windows Calculator (calc.exe) is launched.
 

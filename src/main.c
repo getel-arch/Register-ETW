@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <evntrace.h>
 #include <evntcons.h>
+#include <ole2.h>  // Added for CLSIDFromString
 
 #define PROCESS_TRACE_CREATE_OPCODE 1
 #define PROCESS_PROVIDER_GUID L"{22FB2CD6-0E7B-422B-A0C7-2FAD1FD0E716}"
@@ -23,7 +24,8 @@ int main() {
 
     CLSIDFromString(PROCESS_PROVIDER_GUID, &providerGuid);
 
-    trace.LoggerName = L"Microsoft-Windows-Kernel-Process";
+    // Fix the LoggerName type casting
+    trace.LoggerName = (LPWSTR)L"Microsoft-Windows-Kernel-Process";
     trace.ProcessTraceMode = PROCESS_TRACE_MODE_REAL_TIME | PROCESS_TRACE_MODE_EVENT_RECORD;
     trace.EventRecordCallback = ProcessEventCallback;
 
