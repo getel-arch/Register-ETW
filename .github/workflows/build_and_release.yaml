@@ -17,26 +17,43 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Sync Repo to the Server
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
 
     - name: Create Output Directory
       run: New-Item -ItemType Directory -Path .\output
 
     - name: Compile 64bit Binary
-      run: gcc .\src\main.c -o .\output\etw_calc_monitor.exe -s -m64 -ladvapi32 -lole32
+      run: |
+        gcc .\src\main.c -o .\output\etw_calc_monitor.exe -s -m64 -ladvapi32 -lole32
+        if (-not (Test-Path .\output\etw_calc_monitor.exe)) {
+          Write-Error "Compilation failed - executable not created"
+          exit 1
+        }
 
     - name: Read Version
+      id: version
       run: |
         $version = Get-Content VERSION
-        Write-Output "VERSION=$version" >> $env:GITHUB_ENV
+        echo "VERSION=$version" >> $env:GITHUB_ENV
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+
+    - name: Verify Binary
+      run: |
+        $file = Get-Item .\output\etw_calc_monitor.exe
+        Write-Host "File size: $($file.Length) bytes"
+        Write-Host "File exists: $($file.Exists)"
+        Write-Host "Last write time: $($file.LastWriteTime)"
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ env.VERSION }}
-        name: ${{ github.event.repository.name }} ${{ env.VERSION }}
+        tag_name: v${{ steps.version.outputs.version }}
+        name: Register-ETW v${{ steps.version.outputs.version }}
         make_latest: true
         draft: false
         prerelease: false
         fail_on_unmatched_files: true
-        files: ./output/*
+        files: |
+          ./output/etw_calc_monitor.exe
