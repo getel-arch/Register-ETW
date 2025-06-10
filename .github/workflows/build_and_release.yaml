@@ -31,18 +31,9 @@ jobs:
         }
 
     - name: Read Version
-      id: version
       run: |
         $version = Get-Content VERSION
-        echo "VERSION=$version" >> $env:GITHUB_ENV
-        echo "version=$version" >> $env:GITHUB_OUTPUT
-
-    - name: Verify Binary
-      run: |
-        $file = Get-Item .\output\etw_calc_monitor.exe
-        Write-Host "File size: $($file.Length) bytes"
-        Write-Host "File exists: $($file.Exists)"
-        Write-Host "Last write time: $($file.LastWriteTime)"
+        Write-Output "VERSION=$version" >> $env:GITHUB_ENV
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
