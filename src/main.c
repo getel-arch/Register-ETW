@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include <evntrace.h>
 #include <evntcons.h>
-#include <ole2.h>  // Added for CLSIDFromString
+#include <ole2.h>
+#include <initguid.h> // Added for CLSIDFromString and GUID
+
+#pragma comment(lib, "ole32.lib")
+#pragma comment(lib, "advapi32.lib")
 
 #define PROCESS_TRACE_CREATE_OPCODE 1
 #define PROCESS_PROVIDER_GUID L"{22FB2CD6-0E7B-422B-A0C7-2FAD1FD0E716}"
@@ -22,10 +26,12 @@ int main() {
     EVENT_TRACE_LOGFILE trace = {0};
     GUID providerGuid;
 
+    // Use proper wide string handling
+    WCHAR loggerName[] = L"Microsoft-Windows-Kernel-Process";
+
     CLSIDFromString(PROCESS_PROVIDER_GUID, &providerGuid);
 
-    // Fix the LoggerName type casting
-    trace.LoggerName = (LPWSTR)L"Microsoft-Windows-Kernel-Process";
+    trace.LoggerName = loggerName;  // Now using proper WCHAR array
     trace.ProcessTraceMode = PROCESS_TRACE_MODE_REAL_TIME | PROCESS_TRACE_MODE_EVENT_RECORD;
     trace.EventRecordCallback = ProcessEventCallback;
 
