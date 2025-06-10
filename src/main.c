@@ -26,12 +26,13 @@ int main() {
     EVENT_TRACE_LOGFILE trace = {0};
     GUID providerGuid;
 
-    // Use proper wide string handling
-    WCHAR loggerName[] = L"Microsoft-Windows-Kernel-Process";
+    // Convert wide string to char array
+    CHAR loggerNameA[256];
+    WideCharToMultiByte(CP_ACP, 0, L"Microsoft-Windows-Kernel-Process", -1, loggerNameA, sizeof(loggerNameA), NULL, NULL);
 
-    CLSIDFromString(PROCESS_PROVIDER_GUID, &providerGuid);
+    CLSIDFromString((LPCOLESTR)PROCESS_PROVIDER_GUID, &providerGuid);
 
-    trace.LoggerName = loggerName;  // Now using proper WCHAR array
+    trace.LoggerName = loggerNameA;
     trace.ProcessTraceMode = PROCESS_TRACE_MODE_REAL_TIME | PROCESS_TRACE_MODE_EVENT_RECORD;
     trace.EventRecordCallback = ProcessEventCallback;
 
